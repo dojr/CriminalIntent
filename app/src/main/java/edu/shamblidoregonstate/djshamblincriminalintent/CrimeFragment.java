@@ -1,3 +1,5 @@
+package edu.shamblidoregonstate.djshamblincriminalintent;
+
 import android.os.Bundle;
 
 import android.support.annotation.Nullable;

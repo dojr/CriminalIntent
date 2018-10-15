@@ -1,3 +1,5 @@
+package edu.shamblidoregonstate.djshamblincriminalintent;
+
 import java.util.Date;
 import java.util.UUID;
 
