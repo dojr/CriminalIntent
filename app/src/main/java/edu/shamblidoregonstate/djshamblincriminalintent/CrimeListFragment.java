@@ -22,6 +22,14 @@ public class CrimeListFragment extends Fragment {
     private TextView mTitleTextView;
     private TextView mDateTextView;
     private ImageView mSolvedImageView;
+    private int savedPosition;
+    private static final String SAVED_POSITION = "SAVED_POSITION";
+
+    @Override
+    public void onSaveInstanceState(Bundle onSavedInstanceState) {
+        super.onSaveInstanceState(onSavedInstanceState);
+        onSavedInstanceState.putSerializable(SAVED_POSITION, savedPosition);
+    }
 
     @Override
     public void onResume() {
@@ -37,6 +45,10 @@ public class CrimeListFragment extends Fragment {
                 .findViewById(R.id.crime_recycler_view);
         mCrimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        if (savedInstanceState != null) {
+            savedPosition = savedInstanceState.getInt(SAVED_POSITION);
+        }
+
         updateUI();
 
         return view;
@@ -50,7 +62,7 @@ public class CrimeListFragment extends Fragment {
             mAdapter = new CrimeAdapter(crimes);
             mCrimeRecyclerView.setAdapter(mAdapter);
         } else {
-            mAdapter.notifyItemChanged();
+            mAdapter.notifyItemChanged(savedPosition);
         }
     }
 
