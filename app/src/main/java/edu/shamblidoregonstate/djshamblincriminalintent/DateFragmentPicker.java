@@ -19,7 +19,7 @@ public class DateFragmentPicker extends DialogFragment {
     private static final String ARG_DATE = "date";
     private DatePicker mDatePicker;
     public static final String EXTRA_DATE =
-            "com.bignerdranch.android.criminalintent.date";
+            "edu.shamblidoregonstate.djshamblincriminalintent.date";
 
     public static DateFragmentPicker newInstance(Date date) {
         Bundle args = new Bundle();
