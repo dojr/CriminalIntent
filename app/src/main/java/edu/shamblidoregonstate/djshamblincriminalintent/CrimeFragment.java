@@ -28,8 +28,6 @@ public class CrimeFragment extends Fragment {
     private EditText mTitleField;
     private Button mDateButton;
     private CheckBox mSolvedCheckBox;
-    private Button mFirstCrimeButton;
-    private Button mLastCrimeButton;
 
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "DialogDate";
@@ -112,29 +110,6 @@ public class CrimeFragment extends Fragment {
                 mCrime.setSolved(isChecked);
             }
         });
-
-        mFirstCrimeButton = (Button) v.findViewById(R.id.first_crime);
-        mFirstCrimeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CrimeLab crimeLab = CrimeLab.get(getActivity());
-                Crime firstCrime = crimeLab.getCrimes().get(0);
-                Intent intent = CrimePagerActivity.newIntent(getActivity(), firstCrime.getId());
-                startActivity(intent);
-            }
-        });
-
-        mLastCrimeButton = (Button) v.findViewById(R.id.last_crime);
-        mLastCrimeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CrimeLab crimeLab = CrimeLab.get(getActivity());
-                Crime lastCrime = crimeLab.getCrimes().get(crimeLab.getCrimes().size() - 1);
-                Intent intent = CrimePagerActivity.newIntent(getActivity(), lastCrime.getId());
-                startActivity(intent);
-            }
-        });
-
 
         return v;
     }
