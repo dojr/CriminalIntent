@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +28,8 @@ public class CrimeListFragment extends Fragment {
     private TextView mDateTextView;
     private ImageView mSolvedImageView;
     private boolean mSubtitleVisible;
+    private Button mEmptyCrimeButton;
+    private TextView mEmptyCrimeList;
 
     private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
 
@@ -107,7 +110,21 @@ public class CrimeListFragment extends Fragment {
             mSubtitleVisible = savedInstanceState.getBoolean(SAVED_SUBTITLE_VISIBLE);
         }
 
+        mEmptyCrimeButton = view.findViewById(R.id.empty_crime_button);
+        mEmptyCrimeList = (TextView) view.findViewById(R.id.empty_crime_list);
+
         updateUI();
+
+        mEmptyCrimeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Crime crime = new Crime();
+                CrimeLab.get(getActivity()).addCrime(crime);
+                Intent intent = CrimePagerActivity
+                        .newIntent(getActivity(), crime.getId());
+                startActivity(intent);
+            }
+        });
 
         return view;
     }
@@ -121,6 +138,14 @@ public class CrimeListFragment extends Fragment {
             mCrimeRecyclerView.setAdapter(mAdapter);
         } else {
             mAdapter.notifyDataSetChanged();
+        }
+
+        if (crimes.isEmpty()) {
+            mEmptyCrimeList.setVisibility(View.VISIBLE);
+            mEmptyCrimeButton.setVisibility(View.VISIBLE);
+        } else {
+            mEmptyCrimeList.setVisibility(View.GONE);
+            mEmptyCrimeButton.setVisibility(View.GONE);
         }
 
         updateSubtitle();

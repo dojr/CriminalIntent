@@ -13,4 +13,7 @@
         <item quantity="one">%1$d crime</item>
         <item quantity="other">%1$d crimes</item>
     </plurals>
+    <string name="empty_crime_list">Add a new crime:</string>
+    <string name="empty_crime_button">New Crime</string>
+
 </resources>
