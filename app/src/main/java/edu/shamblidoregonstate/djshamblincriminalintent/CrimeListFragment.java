@@ -1,5 +1,6 @@
 package edu.shamblidoregonstate.djshamblincriminalintent;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -27,8 +28,24 @@ public class CrimeListFragment extends Fragment {
     private TextView mDateTextView;
     private ImageView mSolvedImageView;
     private boolean mSubtitleVisible;
+    private Callbacks mCallbacks;
 
     private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
+
+    public interface Callbacks {
+        void onCrimeSelected(Crime crime);
+    }
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mCallbacks = (Callbacks) context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState){
