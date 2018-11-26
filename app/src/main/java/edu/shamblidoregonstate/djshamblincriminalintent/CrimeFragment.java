@@ -1,5 +1,6 @@
 package edu.shamblidoregonstate.djshamblincriminalintent;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -40,6 +41,7 @@ public class CrimeFragment extends Fragment {
     private EditText mTitleField;
     private Button mDateButton;
     private CheckBox mSolvedCheckBox;
+    private Button mCallSuspect;
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "DialogDate";
     private static final int REQUEST_DATE = 0;
@@ -88,20 +90,40 @@ public class CrimeFragment extends Fragment {
             Uri contactUri = data.getData();
 
             String[] queryFields = new String[] {
+                    ContactsContract.Contacts.LOOKUP_KEY,
                     ContactsContract.Contacts.DISPLAY_NAME
             };
 
             Cursor c = getActivity().getContentResolver()
                     .query(contactUri, queryFields, null, null, null);
+
+            String suspect;
             try {
                 if (c.getCount() == 0) {
                     return;
                 }
 
                 c.moveToFirst();
-                String suspect = c.getString(0);
+                suspect = c.getString(0);
                 mCrime.setSuspect(suspect);
                 mSuspectButton.setText(suspect);
+            } finally {
+                c.close();
+            }
+
+            contactUri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+            queryFields = new String[] {ContactsContract.CommonDataKinds.Phone.NUMBER};
+            c = getActivity().getContentResolver()
+                    .query(contactUri, queryFields,
+                            ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY + " = ? ",
+                            new String[] {suspect}, null);
+            try {
+                if (c.getCount() == 0) {
+                    return;
+                }
+                c.moveToFirst();
+                String number = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                mCrime.setPhoneNumber(number);
             } finally {
                 c.close();
             }
@@ -198,6 +220,7 @@ public class CrimeFragment extends Fragment {
 
         mPhotoButton = (ImageButton) v.findViewById(R.id.crime_camera);
         mPhotoView = (ImageView) v.findViewById(R.id.crime_photo);
+
         final Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         boolean canTakePhoto = mPhotoFile != null &&
                 captureImage.resolveActivity(packageManager) != null;
@@ -206,7 +229,7 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Uri uri = FileProvider.getUriForFile(getActivity(),
-                        "com.bignerdranch.android.criminalintent.fileprovider",
+                        "edu.shamblidoregonstate.djshamblincriminalintent.fileprovider",
                         mPhotoFile);
                 captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
                 List<ResolveInfo> cameraActivities = getActivity()
@@ -217,6 +240,18 @@ public class CrimeFragment extends Fragment {
                             uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 }
                 startActivityForResult(captureImage, REQUEST_PHOTO);
+            }
+        });
+
+        mCallSuspect = (Button) v.findViewById(R.id.call_suspect);
+        mCallSuspect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCrime.getPhoneNumber() != null) {
+                    Uri number = Uri.parse("tel:" + mCrime.getPhoneNumber());
+                    final Intent callContact = new Intent(Intent.ACTION_DIAL, number);
+                    startActivity(callContact);
+                }
             }
         });
 
